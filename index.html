@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Espresso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+<div class="app">
+  <div class="rail" id="rail" aria-label="Crew maps. Select one to switch bodycam."></div>
+  <div class="view" id="view" tabindex="0" aria-label="Bodycam view">
+    <div class="vignette"></div>
+    <div class="cross"></div>
+    <div class="static" id="static"></div>
+    <div class="hud tl"><span id="camName">CAM 1</span><small id="camTeam">North team</small></div>
+    <div class="hud tr"><div class="rec">REC</div><div id="clock">T+00:00</div></div>
+    <div class="hud hint">WASD move · drag to look · 1 to 4 or a map to switch cam · M overview</div>
+    <button class="ovr-btn" id="ovrOpen" type="button">Overview (M)</button>
+    <div class="stick" id="stick"><i id="knob"></i></div>
+  </div>
+</div>
+<div class="overview" id="overview" hidden>
+  <div class="ovr-head"><strong>OVERVIEW</strong><span>Game is still running. Select a crew dot to switch cam.</span><button id="ovrClose" type="button">Close (M)</button></div>
+  <canvas id="ovrCanvas"></canvas>
+</div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+/* Layout idea: a surveillance console. Command rail of four crew maps on the left quarter, live bodycam on the right. Single dark theme by choice. */
+:root {
+  color-scheme: dark;
+  --bg: #0b0f13;
+  --panel: #121920;
+  --line: #25313c;
+  --ink: #d7e0e6;
+  --dim: #7d8c98;
+  --north: #63b7ff;
+  --south: #ffae52;
+  --live: #ff5a4d;
+  --font: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 12px;
+  overflow: hidden;
+  -webkit-user-select: none; user-select: none;
+}
+.app {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(170px, 25%) minmax(0, 1fr);
+  gap: 6px;
+  padding: 6px;
+}
+/* ---- left rail ---- */
+.rail { display: flex; flex-direction: column; gap: 6px; min-height: 0; min-width: 0; }
+.cam-card {
+  flex: 1 1 0; min-height: 0;
+  display: flex; flex-direction: column;
+  padding: 0; margin: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: inherit; font: inherit; text-align: left;
+  cursor: pointer; overflow: hidden;
+}
+.cam-card:hover { border-color: var(--dim); }
+.cam-card:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+.cam-card.active { border-color: var(--team); box-shadow: inset 0 0 0 1px var(--team); }
+.cam-head {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.key {
+  display: inline-grid; place-items: center;
+  width: 16px; height: 16px; border-radius: 3px;
+  background: var(--team); color: #0b0f13; font-weight: 600; font-size: 11px;
+}
+.call { font-weight: 600; letter-spacing: .04em; }
+.team { color: var(--dim); overflow: hidden; text-overflow: ellipsis; }
+.state { margin-left: auto; color: var(--dim); font-size: 10px; letter-spacing: .06em; }
+.cam-card.active .state { color: var(--live); }
+.cam-card canvas { flex: 1 1 0; min-height: 0; width: 100%; display: block; }
+/* ---- bodycam ---- */
+.view {
+  position: relative; min-width: 0; min-height: 0;
+  border: 1px solid var(--line); border-radius: 4px; overflow: hidden;
+  background: #000; touch-action: none; cursor: grab; outline: none;
+}
+.view:active { cursor: grabbing; }
+.view canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%);
+}
+.hud { position: absolute; pointer-events: none; text-shadow: 0 1px 2px #000; letter-spacing: .05em; }
+.hud.tl { top: 10px; left: 12px; font-weight: 600; font-size: 13px; }
+.hud.tl small { display: block; font-weight: 400; font-size: 11px; color: var(--ink); opacity: .8; }
+.hud.tr { top: 10px; right: 12px; text-align: right; font-variant-numeric: tabular-nums; }
+.rec::before {
+  content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--live); margin-right: 6px; animation: blink 1.2s steps(2) infinite;
+}
+.hud.hint { left: 12px; right: 12px; bottom: 10px; color: var(--ink); opacity: .75; font-size: 11px; }
+.cross { position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px; border-radius: 50%; background: rgba(255,255,255,.7); pointer-events: none; }
+.ovr-btn {
+  position: absolute; right: 12px; bottom: 10px;
+  font: inherit; color: var(--ink); background: rgba(18,25,32,.85);
+  border: 1px solid var(--line); border-radius: 4px; padding: 6px 10px; cursor: pointer;
+}
+.ovr-btn:hover { border-color: var(--dim); }
+.ovr-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+.static { position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background: repeating-linear-gradient(0deg, rgba(255,255,255,.14) 0 2px, rgba(0,0,0,.25) 2px 4px); }
+.static.on { animation: cut .18s linear; }
+.stick { position: absolute; width: 96px; height: 96px; margin: -48px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.06); pointer-events: none; display: none; }
+.stick i { position: absolute; left: 50%; top: 50%; width: 36px; height: 36px; margin: -18px; border-radius: 50%; background: rgba(255,255,255,.35); }
+.fail { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--ink); }
+/* ---- overview ---- */
+.overview { position: fixed; inset: 0; z-index: 10; background: rgba(8,11,14,.96); display: flex; flex-direction: column; padding: 10px; gap: 8px; }
+.overview[hidden] { display: none; }
+.ovr-head { display: flex; align-items: center; gap: 10px; }
+.ovr-head strong { letter-spacing: .08em; }
+.ovr-head span { color: var(--dim); }
+.ovr-head button { margin-left: auto; font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 6px 10px; cursor: pointer; }
+.ovr-head button:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+.overview canvas { flex: 1 1 0; min-height: 0; width: 100%; display: block; border: 1px solid var(--line); border-radius: 4px; cursor: pointer; }
+@keyframes blink { 50% { opacity: .25; } }
+@keyframes cut { 0% { opacity: .9; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .rec::before, .static.on { animation: none; } }
+/* Portrait or narrow: bodycam on top, the four maps in a row beneath */
+@media (max-aspect-ratio: 1/1), (max-width: 620px) {
+  .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(110px, 26%); }
+  .view { grid-row: 1; }
+  .rail { grid-row: 2; flex-direction: row; }
+  .team { display: none; }
+  .hud.hint { display: none; }
+}
